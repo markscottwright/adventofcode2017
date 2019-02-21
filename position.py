@@ -11,6 +11,7 @@ class Position:
     def s(self): return Position(self.x, self.y+1)
 
     def distance(self, other):
+        'Calculate the Manhattan distance between two points'
         return abs(self.x-other.x) + abs(self.y-other.y)
 
     def surrounding_positions(self):
