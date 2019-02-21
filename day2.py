@@ -16,7 +16,7 @@ def sum_all_even_divisions(spreadsheet):
     total = 0
     for row in spreadsheet:
         a, b = even_divisors(row)
-        total += a//b
+        total += a/b
     return total
 
 
