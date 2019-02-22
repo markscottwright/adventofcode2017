@@ -87,6 +87,9 @@ if __name__ == '__main__':
         instructions = [Instruction.parse(l) for l in f]
 
     registers = collections.defaultdict(lambda: 0)
+    max_value_ever = 0
     for i in instructions:
         registers = i.test_and_apply(registers)
+        max_value_ever = max(max_value_ever, max(registers.values()))
     print("day 8 part 1:", max(registers.values()))
+    print("day 8 part 2:", max_value_ever)
