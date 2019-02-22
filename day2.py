@@ -20,7 +20,7 @@ def sum_all_even_divisions(spreadsheet):
     return total
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     spreadsheet = []
     with open("day2.txt") as f:
         for line in f.readlines():

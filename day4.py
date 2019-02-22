@@ -12,7 +12,7 @@ def contains_anagrams(words):
     return any(count > 1 for count in counted.values())
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     with open("day4.txt") as f:
         pass_phrases = [l.split() for l in f.readlines()]
 
@@ -20,6 +20,6 @@ if __name__=='__main__':
     print("day 4 part one:", num_valid)
 
     num_valid = sum(
-        1 for p in pass_phrases 
+        1 for p in pass_phrases
         if not contains_anagrams(p) and not contains_duplicates(p))
     print("day 4 part two:", num_valid)
