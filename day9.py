@@ -14,6 +14,7 @@ def count_garbage(s: str):
             count += 1
     return count
 
+
 def strip_garbage_iter(s: str):
     in_garbage = False
     chars = iter(s)
@@ -28,14 +29,15 @@ def strip_garbage_iter(s: str):
         elif not in_garbage:
             yield c
     assert not in_garbage
-        
+
+
 def strip_garbage(s: str):
     return "".join(strip_garbage_iter(s))
 
 
 def num_groups(s):
     return sum(1 for c in strip_garbage(s) if c == '}')
-    
+
 
 def read_to_end_of_garbage(chars):
     for c in chars:
@@ -89,7 +91,7 @@ if __name__ == '__main__':
 
     assert [] == parse("{}")
     assert [[]] == parse("{{}}")
-    assert [[],[]] == parse("{{},{}}")
+    assert [[], []] == parse("{{},{}}")
 
     assert 6 == score(parse("{{{}}}"))
     assert 5 == score(parse("{{},{}}"))

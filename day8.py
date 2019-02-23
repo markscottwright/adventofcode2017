@@ -7,9 +7,9 @@ class Instruction:
             self,
             register_name,
             operation,
-            argument, 
-            test_register_name, 
-            test_operation, 
+            argument,
+            test_register_name,
+            test_operation,
             test_argument):
 
         assert operation in ['inc', 'dec']
@@ -81,6 +81,7 @@ class Instruction:
             self.test_register_name,
             self.test_operation,
             self.test_argument)
+
 
 if __name__ == '__main__':
     with open('day8.txt') as f:

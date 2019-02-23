@@ -77,9 +77,20 @@ def find_problem_child_and_weight_change_needed(program, programs):
             return most_common_weight-w, name_to_program[c]
 
 
+def find_root_node(programs):
+    all_child_names = set()
+    all_names = set()
+    for p in programs:
+        all_names.add(p.name)
+        all_child_names.update(p.children)
+    return next(iter(all_names.difference(all_child_names)))
+
+
 if __name__ == '__main__':
     with open("day7.txt") as f:
         programs = [Program.parse(l) for l in f]
+    print("day 7 part 1:", find_root_node(programs))
+
     p = find_unbalanced_with_balanced_children(programs)
     weight_change, c = find_problem_child_and_weight_change_needed(p, programs)
     print("day 7 part 2:", c.weight+weight_change)
