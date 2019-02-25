@@ -42,14 +42,8 @@ class HexCell:
                 
 
     def surrounding_cells(self):
-        return [
-            self.n(),
-            self.ne(),
-            self.se(),
-            self.s(),
-            self.sw(),
-            self.nw(),
-            ]
+        return [self.n(), self.ne(), self.se(),
+                self.s(), self.sw(), self.nw(),]
 
     def __str__(self):
         return "[%d,%d]" % (self.x, self.y)
