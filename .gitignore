@@ -1,2 +1,5 @@
 *.sw[a-z] 
-__pycache__/ 
+.classpath 
+.project 
+.settings/ 
+target/ 

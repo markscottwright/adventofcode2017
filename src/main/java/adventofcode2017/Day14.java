@@ -5,15 +5,11 @@ import static java.util.Arrays.asList;
 import static org.eclipse.collections.impl.list.Interval.zeroTo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.collections.api.factory.map.MutableMapFactory;
-import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.api.map.MutableMap;
-import org.eclipse.collections.impl.list.Interval;
-import org.eclipse.collections.impl.map.mutable.MutableMapFactoryImpl;
 import org.eclipse.collections.impl.map.mutable.UnifiedMap;
+import org.eclipse.collections.impl.set.mutable.UnifiedSet;
 
 public class Day14 {
 
@@ -57,23 +53,46 @@ public class Day14 {
 
     static class UsedSquares {
 
+        private final UnifiedMap<Point, Integer> pointToRegion = new UnifiedMap<>();
+        private int numRegions = 0;
+
+        void assignToRegion(Point p, List<ArrayList<Boolean>> used,
+                Integer regionNumber) {
+
+            LinkedList<Point> candidates = new LinkedList<>();
+            candidates.add(p);
+
+            while (!candidates.isEmpty()) {
+                Point candidate = candidates.remove();
+                if (candidate.in(used)
+                        && !pointToRegion.containsKey(candidate)) {
+                    pointToRegion.put(candidate, regionNumber);
+                    candidate.neighbors().forEach(each -> {
+                        if (each.x >= 0 && each.x < 128 && each.y >= 0
+                                && each.y < 128)
+                            candidates.add(each);
+                    });
+                }
+            }
+        }
+
         public UsedSquares(List<ArrayList<Boolean>> used) {
-            UnifiedMap<Point, Integer> pointToRegion = new UnifiedMap<>();
 
             final int maxY = used.size();
             final int maxX = used.get(0).size();
-            int nextRegionNumber = 0;
 
             for (int y = 0; y < maxY; ++y) {
                 for (int x = 0; x < maxX; ++x) {
-                    if (used.get(y).get(x)) {
-                        Point pt = new Point(x, y);
-                        if (!pointToRegion.containsKey(pt)) {
-                            pointToRegion = assignRegion(pt, pointToRegion, nextRegionNumber++);
-                        }
+                    Point pt = new Point(x, y);
+                    if (pt.in(used) && !pointToRegion.containsKey(pt)) {
+                        assignToRegion(pt, used, ++numRegions);
                     }
                 }
             }
+        }
+
+        public int getNumRegions() {
+            return numRegions;
         }
 
     }
@@ -88,7 +107,8 @@ public class Day14 {
         var used = zeroTo(127).collect(i -> {
             return stringToBits(knotHash(keyString + "-" + i));
         }).toList();
-        new UsedSquares(used);
+        UsedSquares usage = new UsedSquares(used);
+        System.out.println("day 14 part 2:" + usage.getNumRegions());
     }
 
 }
