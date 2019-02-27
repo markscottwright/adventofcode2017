@@ -118,7 +118,7 @@ public class Day16 {
         System.out.println("Day 16 part 1:" + finalState);
         
         UnifiedMap<String, Integer> stateToDanceNumber = new UnifiedMap<>();
-        int danceNumber = 1;
+        int danceNumber = 0;
         while (!stateToDanceNumber.containsKey(finalState)) {
             stateToDanceNumber.put(finalState, danceNumber++);
             
@@ -126,6 +126,8 @@ public class Day16 {
             finalState = programs.makeString("");
         }
         
-        System.out.println(stateToDanceNumber);
+        int expectedDanceNumberAtEnd = 1_000_000_000 % stateToDanceNumber.size();
+        System.out.println(expectedDanceNumberAtEnd);
+        System.out.println(stateToDanceNumber.flip().get(expectedDanceNumberAtEnd+1));
     }
 }
