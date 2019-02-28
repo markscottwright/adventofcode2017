@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.list.Interval;
 import org.eclipse.collections.impl.list.fixed.ArrayAdapter;
 import org.eclipse.collections.impl.list.mutable.FastList;
@@ -116,18 +115,17 @@ public class Day16 {
         moves.forEach(move -> move.performWith(programs));
         String finalState = programs.makeString("");
         System.out.println("Day 16 part 1:" + finalState);
-        
-        UnifiedMap<String, Integer> stateToDanceNumber = new UnifiedMap<>();
-        int danceNumber = 0;
-        while (!stateToDanceNumber.containsKey(finalState)) {
-            stateToDanceNumber.put(finalState, danceNumber++);
-            
+
+        FastList<String> finalStates = FastList.newList();
+        while (!finalStates.contains(finalState)) {
+            finalStates.add(finalState);
             moves.forEach(move -> move.performWith(programs));
             finalState = programs.makeString("");
         }
-        
-        int expectedDanceNumberAtEnd = 1_000_000_000 % stateToDanceNumber.size();
-        System.out.println(expectedDanceNumberAtEnd);
-        System.out.println(stateToDanceNumber.flip().get(expectedDanceNumberAtEnd+1));
+
+        // subtract one, since we start at 0, so the billionth dance's index is
+        // billion-1
+        int expectedDanceNumberAtEnd = (1_000_000_000 - 1) % finalStates.size();
+        System.out.println("Day 16 part 2:" + finalStates.get(expectedDanceNumberAtEnd));
     }
 }
