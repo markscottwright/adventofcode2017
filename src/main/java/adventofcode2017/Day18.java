@@ -5,7 +5,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+
+import adventofcode2017.Day18.Duet;
 
 public class Day18 {
 
@@ -38,8 +41,13 @@ public class Day18 {
 
         @Override
         int applyTo(Duet duet) {
-            duet.setLastSound(duet.get(x));
-            return 1;
+            if (duet.version == 1) {
+                duet.setLastSound(duet.get(x));
+                return 1;
+            } else {
+                duet.sendMessage(duet.get(x));
+                return 1;
+            }
         }
 
     }
@@ -108,10 +116,22 @@ public class Day18 {
 
         @Override
         int applyTo(Duet duet) {
-            if (duet.get(x) != 0)
-                return 1000000;
-            else
-                return 1;
+            if (duet.version == 1) {
+                if (duet.get(x) != 0)
+                    return 1000000;
+                else
+                    return 1;
+            } else {
+                if (duet.hasMessages()) {
+                    duet.setRegister(x, duet.getMessage());
+                    duet.waiting = false;
+                    return 1;
+                } else {
+                    duet.waiting = true;
+                    // no pending messages. Try again
+                    return 0;
+                }
+            }
         }
 
     }
@@ -134,21 +154,63 @@ public class Day18 {
 
     static class Duet {
 
-        HashMap<String, Long> registers;
-        Long lastSound = 0L;
+        public final int version;
+        private List<Instruction> program;
+        private Duet partner;
 
-        Long run(List<Instruction> program) {
-            lastSound = 0L;
-            registers = new HashMap<>();
-            int lineNumber = 0;
-            while (lineNumber >= 0 && lineNumber < program.size()) {
-                Instruction instruction = program.get(lineNumber);
-//                System.out.print(lineNumber + " " + instruction + ":"
-//                        + lastSound + ":" + registers);
-                lineNumber += instruction.applyTo(this);
-                // System.out.println(" -> " + lastSound + ":" + registers);
+        public boolean waiting = false;
+        private HashMap<String, Long> registers = new HashMap<>();
+        private LinkedList<Long> messageQueue = new LinkedList<>();
+        private Long lastSound = 0L;
+        private int lineNumber = 0;
+        private int numSends = 0;
+
+        Duet(List<Instruction> program) {
+            this(program, -1);
+        }
+
+        Duet(List<Instruction> program, int programId) {
+            this.program = program;
+            if (programId == -1) {
+                this.version = 1;
+            } else {
+                this.version = 2;
+                registers.put("p", (long) programId);
             }
+        }
+
+        boolean next() {
+            if (lineNumber < 0 || lineNumber >= program.size()) {
+//                System.out.println("stopped");
+                return false;
+            } else {
+                Instruction instruction = program.get(lineNumber);
+//                System.out.println(this);
+//                System.out.println(instruction);
+                lineNumber += instruction.applyTo(this);
+//                System.out.println(this);
+                return true;
+            }
+        }
+
+        Long runToCompletion() {
+            while (next())
+                ;
             return lastSound;
+        }
+
+        public Long getMessage() {
+            assert !messageQueue.isEmpty();
+            return messageQueue.remove();
+        }
+
+        public boolean hasMessages() {
+            return !messageQueue.isEmpty();
+        }
+
+        public void sendMessage(Long v) {
+            numSends++;
+            partner.messageQueue.add(v);
         }
 
         public void setRegister(String registerName, Long value) {
@@ -186,6 +248,21 @@ public class Day18 {
         public Long getLastSound() {
             return lastSound;
         }
+
+        public void setPartner(Duet partner) {
+            this.partner = partner;
+        }
+
+        @Override
+        public String toString() {
+            return "Duet [version=" + version + ", lineNumber=" + lineNumber
+                    + ", registers=" + registers + ", messageQueue="
+                    + messageQueue + "]";
+        }
+
+        public int getNumSends() {
+            return this.numSends;
+        }
     }
 
     public static void main(String[] args) throws IOException {
@@ -193,8 +270,24 @@ public class Day18 {
         Files.readAllLines(Paths.get("data", "day18.txt"))
                 .forEach(l -> program.add(Duet.parse(l)));
 
-        Duet duet = new Duet();
-        duet.run(program);
+        Duet duet = new Duet(program);
+        duet.runToCompletion();
         System.out.println("Day 18 part 1:" + duet.getLastSound());
+
+        Duet duet0 = new Duet(program, 0);
+        Duet duet1 = new Duet(program, 1);
+        duet0.setPartner(duet1);
+        duet1.setPartner(duet0);
+
+        while (true) {
+            boolean duet1Complete = !duet0.next();
+            boolean duet2Complete = !duet1.next();
+            // both complete or both deadlocked?
+            if (duet1Complete && duet2Complete
+                    || duet0.waiting && duet1.waiting)
+                break;
+        }
+
+        System.out.println("Day 18 part 2:" + duet1.getNumSends());
     }
 }

@@ -1,14 +1,9 @@
 package adventofcode2017;
 
 import static adventofcode2017.KnotHash.knotHash;
-import static java.util.Arrays.asList;
 import static org.eclipse.collections.impl.list.Interval.zeroTo;
-
-import static adventofcode2017.KnotHash.knotHash;
-import static org.eclipse.collections.impl.list.Interval.zeroTo;
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
