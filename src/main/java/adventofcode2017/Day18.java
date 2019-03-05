@@ -263,6 +263,21 @@ public class Day18 {
         public int getNumSends() {
             return this.numSends;
         }
+
+        public void runToCompletionWith(Duet partner) {
+            this.setPartner(partner);
+            partner.setPartner(this);
+
+            while (true) {
+                boolean meComplete = !next();
+                boolean partnerComplete = !partner.next();
+                // both complete or both deadlocked?
+                if (meComplete && partnerComplete
+                        || waiting && partner.waiting)
+                    break;
+            }
+            
+        }
     }
 
     public static void main(String[] args) throws IOException {
@@ -276,18 +291,7 @@ public class Day18 {
 
         Duet duet0 = new Duet(program, 0);
         Duet duet1 = new Duet(program, 1);
-        duet0.setPartner(duet1);
-        duet1.setPartner(duet0);
-
-        while (true) {
-            boolean duet1Complete = !duet0.next();
-            boolean duet2Complete = !duet1.next();
-            // both complete or both deadlocked?
-            if (duet1Complete && duet2Complete
-                    || duet0.waiting && duet1.waiting)
-                break;
-        }
-
+        duet0.runToCompletionWith(duet1);
         System.out.println("Day 18 part 2:" + duet1.getNumSends());
     }
 }
