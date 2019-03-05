@@ -10,7 +10,9 @@ public class Day21 {
     static abstract class Matrix {
         abstract Matrix rotate90();
 
-        abstract Matrix flip();
+        abstract Matrix flipVertical();
+
+        abstract Matrix flipHorizontal();
 
         abstract int getSide();
 
@@ -67,25 +69,45 @@ public class Day21 {
         @Override
         Matrix3 rotate90() {
             char[][] m = new char[3][3];
-            put(0, 0, get(1, 0));
-            put(1, 0, get(2, 0));
-            put(2, 0, get(2, 1));
-            put(2, 1, get(2, 2));
-            put(2, 2, get(1, 2));
-            put(1, 2, get(0, 2));
-            put(0, 2, get(0, 1));
-            put(0, 1, get(0, 0));
-            put(1, 1, get(1, 1));
+            m[1][1] = matrix[1][1];
+            m[0][0] = matrix[1][0];
+            m[1][0] = matrix[2][0];
+            m[2][0] = matrix[2][1];
+            m[2][1] = matrix[2][2];
+            m[2][2] = matrix[1][2];
+            m[1][2] = matrix[0][2];
+            m[0][2] = matrix[0][1];
+            m[0][1] = matrix[0][0];
             return new Matrix3(m);
         }
 
         @Override
-        Matrix3 flip() {
+        Matrix3 flipVertical() {
             char[][] m = new char[3][3];
-            put(0, 0, get(0, 2));
-            put(1, 0, get(1, 2));
-            put(2, 0, get(2, 2));
-            put(2, 0, get(2, 2));
+            m[0][0] = matrix[2][0];
+            m[0][1] = matrix[2][1];
+            m[0][2] = matrix[2][2];
+            m[1][0] = matrix[1][0];
+            m[1][1] = matrix[1][1];
+            m[1][2] = matrix[1][2];
+            m[2][0] = matrix[0][0];
+            m[2][1] = matrix[0][1];
+            m[2][2] = matrix[0][2];
+            return new Matrix3(m);
+        }
+
+        @Override
+        Matrix3 flipHorizontal() {
+            char[][] m = new char[3][3];
+            m[0][0] = matrix[0][2];
+            m[1][0] = matrix[1][2];
+            m[2][0] = matrix[2][2];
+            m[0][1] = matrix[0][1];
+            m[1][1] = matrix[1][1];
+            m[2][1] = matrix[2][1];
+            m[0][2] = matrix[0][0];
+            m[1][2] = matrix[1][0];
+            m[2][2] = matrix[2][0];
             return new Matrix3(m);
         }
 
@@ -98,24 +120,34 @@ public class Day21 {
         char get(int x, int y) {
             return matrix[y][x];
         }
-
-        private void put(int x, int y, char v) {
-            matrix[y][x] = v;
-        }
     }
 
     static class Matrix2 extends Matrix {
 
-        @Override
-        Matrix rotate90() {
-            char[]][] m = new char[2][2];
-            m[0][0] = get(0, 1);
-            m[1][0] = get(0, 0);
-            m[1][1] = get(0, 1);
+        final private char[][] matrix;
+
+        public Matrix2(char[][] m) {
+            matrix = m;
         }
 
         @Override
-        Matrix flip() {
+        Matrix rotate90() {
+            char[][] m = new char[2][2];
+            m[0][0] = matrix[0][1];
+            m[1][0] = matrix[0][0];
+            m[1][1] = matrix[1][0];
+            m[0][1] = matrix[1][1];
+            return new Matrix2(m);
+        }
+
+        @Override
+        Matrix flipVertical() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        Matrix flipHorizontal() {
             // TODO Auto-generated method stub
             return null;
         }
@@ -135,6 +167,10 @@ public class Day21 {
     }
 
     public static void main(String[] args) {
-        System.out.println(Matrix.parse(".#./..#/###").print());
+        Matrix matrix = Matrix.parse(".#./..#/###");
+        System.out.println(matrix.print());
+        System.out.println(matrix.rotate90().print());
+        System.out.println(matrix.flipHorizontal().print());
+        System.out.println(matrix.flipVertical().print());
     }
 }
