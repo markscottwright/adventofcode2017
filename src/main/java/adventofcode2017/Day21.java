@@ -47,6 +47,8 @@ public class Day21 {
             char[][] m2 = m.toArray(new char[0][]);
             if (m2.length == 3)
                 return new Matrix3(m2);
+            else if (m2.length == 2)
+                return new Matrix2(m2);
 
             throw new RuntimeException(line);
         }
@@ -70,14 +72,14 @@ public class Day21 {
         Matrix3 rotate90() {
             char[][] m = new char[3][3];
             m[1][1] = matrix[1][1];
-            m[0][0] = matrix[1][0];
-            m[1][0] = matrix[2][0];
-            m[2][0] = matrix[2][1];
-            m[2][1] = matrix[2][2];
-            m[2][2] = matrix[1][2];
-            m[1][2] = matrix[0][2];
-            m[0][2] = matrix[0][1];
-            m[0][1] = matrix[0][0];
+            m[0][0] = matrix[0][2];
+            m[1][0] = matrix[0][1];
+            m[2][0] = matrix[0][0];
+            m[2][1] = matrix[1][0];
+            m[2][2] = matrix[2][0];
+            m[1][2] = matrix[2][1];
+            m[0][2] = matrix[2][2];
+            m[0][1] = matrix[1][2];
             return new Matrix3(m);
         }
 
@@ -120,6 +122,26 @@ public class Day21 {
         char get(int x, int y) {
             return matrix[y][x];
         }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Arrays.deepHashCode(matrix);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            Matrix3 other = (Matrix3) obj;
+            return Arrays.deepEquals(matrix, other.matrix);
+        }
     }
 
     static class Matrix2 extends Matrix {
@@ -142,26 +164,52 @@ public class Day21 {
 
         @Override
         Matrix flipVertical() {
-            // TODO Auto-generated method stub
-            return null;
+            char[][] m = new char[2][2];
+            m[0][0] = matrix[1][0];
+            m[1][0] = matrix[0][0];
+            m[1][1] = matrix[0][1];
+            m[0][1] = matrix[1][1];
+            return new Matrix2(m);
         }
 
         @Override
         Matrix flipHorizontal() {
-            // TODO Auto-generated method stub
-            return null;
+            char[][] m = new char[2][2];
+            m[0][0] = matrix[0][1];
+            m[0][1] = matrix[0][0];
+            m[1][1] = matrix[1][0];
+            m[1][0] = matrix[1][1];
+            return new Matrix2(m);
         }
 
         @Override
         int getSide() {
-            // TODO Auto-generated method stub
-            return 0;
+            return 2;
         }
 
         @Override
         char get(int x, int y) {
-            // TODO Auto-generated method stub
-            return 0;
+            return matrix[y][x];
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + Arrays.deepHashCode(matrix);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            Matrix2 other = (Matrix2) obj;
+            return Arrays.deepEquals(matrix, other.matrix);
         }
 
     }
