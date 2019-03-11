@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import adventofcode2017.Day18.Duet;
-
 public class Day18 {
 
     public static abstract class Instruction {

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 public class Day21 {
 
     static abstract class Matrix {
+
         abstract Matrix rotate90();
 
         abstract Matrix flipVertical();
@@ -26,15 +27,22 @@ public class Day21 {
             return rotate90().rotate90().rotate90();
         }
 
-        String print() {
+        @Override
+        public String toString() {
             String out = "";
             for (int y = getSide() - 1; y >= 0; --y) {
+                if (!out.equals(""))
+                    out += "/";
                 for (int x = 0; x < getSide(); ++x) {
                     out += Character.toString(get(x, y));
                 }
-                out += "\n";
             }
             return out;
+
+        }
+
+        String print() {
+            return toString().replace("/", "\n");
         }
 
         static Matrix parse(String line) {
@@ -211,14 +219,65 @@ public class Day21 {
             Matrix2 other = (Matrix2) obj;
             return Arrays.deepEquals(matrix, other.matrix);
         }
+    }
 
+    static class BigMatrix {
+
+        static char[][] submatrix(char[][] src, int xOrigin, int yOrigin,
+                int side) {
+            char[][] dest = new char[side][side];
+            for (int x = 0; x < side; x++) {
+                for (int y = 0; y < side; ++y) {
+                    dest[y][x] = src[y + yOrigin][x + xOrigin];
+                }
+            }
+            return dest;
+        }
+
+        private int side;
+        private char[][] matrix;
+
+        public BigMatrix(Matrix[][] components) {
+            int componentSide = components[0][0].getSide();
+            side = components.length * componentSide;
+
+            matrix = new char[side][side];
+            for (int y = 0; y < side; ++y) {
+                for (int x = 0; x < side; ++x) {
+                    matrix[y][x] = components[y / componentSide][x
+                            / componentSide].get(x % componentSide,
+                                    y % componentSide);
+                }
+            }
+        }
+
+        Matrix[][] divide() {
+            Matrix[][] dest;
+            if (side % 2 == 0) {
+                int newSide = side / 2;
+                dest = new Matrix[newSide][newSide];
+                for (int x = 0; x < newSide; ++x) {
+                    for (int y = 0; y < newSide; ++y) {
+                        dest[x][y] = new Matrix2(
+                                submatrix(matrix, x * 2, y * 2, 2));
+                    }
+                }
+            } else {
+                assert side % 3 == 0;
+                int newSide = side / 3;
+                dest = new Matrix[newSide][newSide];
+                for (int x = 0; x < newSide; ++x) {
+                    for (int y = 0; y < newSide; ++y) {
+                        dest[x][y] = new Matrix2(
+                                submatrix(matrix, x * 3, y * 3, 3));
+                    }
+                }
+            }
+            return dest;
+        }
     }
 
     public static void main(String[] args) {
         Matrix matrix = Matrix.parse(".#./..#/###");
-        System.out.println(matrix.print());
-        System.out.println(matrix.rotate90().print());
-        System.out.println(matrix.flipHorizontal().print());
-        System.out.println(matrix.flipVertical().print());
     }
 }

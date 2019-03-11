@@ -10,7 +10,6 @@ import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.list.Interval;
 import org.eclipse.collections.impl.list.fixed.ArrayAdapter;
 import org.eclipse.collections.impl.list.mutable.FastList;
-import org.eclipse.collections.impl.map.mutable.UnifiedMap;
 
 public class Day16 {
 
